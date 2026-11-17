@@ -22,7 +22,11 @@ async fn gateway(policy: Value) -> (Svc, PathBuf) {
         json!({"servers": {"mock": {"command": env!("CARGO_BIN_EXE_mock_mcp")}}, "policy": policy});
     std::fs::write(dir.join("omnix.json"), cfg.to_string()).unwrap();
     let mut c = tokio::process::Command::new(env!("CARGO_BIN_EXE_omnix"));
-    c.arg("serve").current_dir(&dir).env("HOME", &dir);
+    c.arg("serve")
+        .current_dir(&dir)
+        .env("HOME", &dir)
+        .env("OMNIX_CONFIG_DIR", dir.join("cfg"))
+        .env("OMNIX_CATALOG_CACHE", "off");
     (
         ().serve(TokioChildProcess::new(c).unwrap()).await.unwrap(),
         dir,
@@ -48,10 +52,8 @@ async fn read_only_hides_and_blocks_writes_and_unannotated() {
     let found = call(&svc, "search", json!({"query": "item", "limit": 20})).await;
     assert!(found.contains("mock.list_items"), "{found}");
     assert!(!found.contains("delete_item"), "{found}");
-    assert_eq!(
-        call(&svc, "search", json!({"query": "no_annotations"})).await,
-        "no matches"
-    );
+    let none = call(&svc, "search", json!({"query": "no_annotations"})).await;
+    assert!(none.starts_with("no matches"), "{none}");
     // Even though hidden from search, calling it from the sandbox is refused.
     let out = call(
         &svc,

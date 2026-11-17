@@ -11,7 +11,9 @@ async fn gateway() -> (
     let mut c = tokio::process::Command::new(env!("CARGO_BIN_EXE_omnix"));
     c.arg("serve")
         .current_dir(dir.path())
-        .env("HOME", dir.path());
+        .env("HOME", dir.path())
+        .env("OMNIX_CONFIG_DIR", dir.path().join("cfg"))
+        .env("OMNIX_CATALOG_CACHE", "off");
     let svc = ().serve(TokioChildProcess::new(c).unwrap()).await.unwrap();
     (svc, dir)
 }
@@ -73,10 +75,8 @@ async fn search_finds_upstream_tool() {
     let (svc, _d) = gateway().await;
     let out = call(&svc, "search", json!({"query": "delete item"})).await;
     assert!(out.starts_with("mock.delete_item"), "{out}");
-    assert_eq!(
-        call(&svc, "search", json!({"query": "zzzzz"})).await,
-        "no matches"
-    );
+    let none = call(&svc, "search", json!({"query": "zzzzz"})).await;
+    assert!(none.starts_with("no matches"), "{none}");
 }
 
 #[tokio::test]

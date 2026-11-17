@@ -129,7 +129,11 @@ async fn run_with(server_cfg: Value, token_env: Option<(&str, &str)>) -> String 
     )
     .unwrap();
     let mut c = tokio::process::Command::new(env!("CARGO_BIN_EXE_omnix"));
-    c.arg("serve").current_dir(&dir).env("HOME", &dir);
+    c.arg("serve")
+        .current_dir(&dir)
+        .env("HOME", &dir)
+        .env("OMNIX_CONFIG_DIR", dir.join("cfg"))
+        .env("OMNIX_CATALOG_CACHE", "off");
     if let Some((k, v)) = token_env {
         c.env(k, v);
     }
