@@ -253,7 +253,7 @@ cargo clippy --all-targets && cargo fmt --check
 ```
 
 The end-to-end tests drive `omnix` as a child process against mock MCP, OAuth and legacy-SSE servers in `tests/`
-and `src/bin/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
+and `examples/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Prior art
 

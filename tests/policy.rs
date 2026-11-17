@@ -1,4 +1,6 @@
 //! E2E: policy (read-only, allow/deny, hook), audit log, binary handles.
+mod support;
+
 use rmcp::{ServiceExt, model::CallToolRequestParams, transport::TokioChildProcess};
 use serde_json::{Value, json};
 use std::path::PathBuf;
@@ -18,8 +20,7 @@ fn tmp() -> PathBuf {
 
 async fn gateway(policy: Value) -> (Svc, PathBuf) {
     let dir = tmp();
-    let cfg =
-        json!({"servers": {"mock": {"command": env!("CARGO_BIN_EXE_mock_mcp")}}, "policy": policy});
+    let cfg = json!({"servers": {"mock": {"command": support::example_bin("mock_mcp")}}, "policy": policy});
     std::fs::write(dir.join("omnix.json"), cfg.to_string()).unwrap();
     let mut c = tokio::process::Command::new(env!("CARGO_BIN_EXE_omnix"));
     c.arg("serve")

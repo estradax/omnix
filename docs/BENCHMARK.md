@@ -8,7 +8,7 @@ definitions are loaded directly versus (B) the agent talks to the omnix gateway 
     cargo test --test bench -- --ignored --nocapture      # full run, writes target/bench-report.md
     cargo test --test bench benchmark_smoke               # fast sanity (2 servers x 5 tools, 50 records)
 
-Fully offline and deterministic (byte counts): servers are `src/bin/mock_many.rs` with a hand-written
+Fully offline and deterministic (byte counts): servers are `examples/mock_many.rs` with a hand-written
 seeded PRNG (seed 42, server name mixed in), config lives in a temp dir (`HOME` and `OMNIX_CONFIG_DIR` set,
 environment cleared for the gateway process). Only wall-clock numbers vary between runs.
 

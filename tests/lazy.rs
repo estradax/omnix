@@ -1,5 +1,7 @@
 //! E2E: `serve` answers the agent immediately; the catalog cache serves search/describe
 //! while a slow upstream is still starting; execute waits for the upstream.
+mod support;
+
 use rmcp::{ServiceExt, model::CallToolRequestParams, transport::TokioChildProcess};
 use serde_json::{Value, json};
 use std::{
@@ -22,7 +24,7 @@ fn tmp() -> PathBuf {
 
 /// A server that takes ~3s to start: sh sleeps, then execs the mock.
 fn config(dir: &std::path::Path, delay: u32) {
-    let cmd = format!("sleep {delay}; exec {}", env!("CARGO_BIN_EXE_mock_mcp"));
+    let cmd = format!("sleep {delay}; exec {}", support::example_bin("mock_mcp"));
     let cfg = json!({"servers": {"slow": {"command": "sh", "args": ["-c", cmd]}}});
     std::fs::write(dir.join("omnix.json"), cfg.to_string()).unwrap();
 }
@@ -116,7 +118,7 @@ async fn handshake_is_immediate_and_cache_answers_while_upstream_starts() {
 async fn cache_is_not_written_when_an_upstream_failed_and_holds_no_secrets() {
     let dir = tmp();
     let cfg = json!({"servers": {
-        "ok": {"command": env!("CARGO_BIN_EXE_mock_mcp"), "env": {"API_TOKEN": "s3cr3t-value"}},
+        "ok": {"command": support::example_bin("mock_mcp"), "env": {"API_TOKEN": "s3cr3t-value"}},
         "bad": {"command": "/definitely/not/here"}}});
     std::fs::write(dir.join("omnix.json"), cfg.to_string()).unwrap();
     let (svc, _) = start(&dir).await;
@@ -133,7 +135,7 @@ async fn cache_is_not_written_when_an_upstream_failed_and_holds_no_secrets() {
     assert_eq!(n, 0, "a partial catalog must not be cached");
 
     // With everything healthy, a cache is written and contains no credentials.
-    let cfg = json!({"servers": {"ok": {"command": env!("CARGO_BIN_EXE_mock_mcp"), "env": {"API_TOKEN": "s3cr3t-value"}}}});
+    let cfg = json!({"servers": {"ok": {"command": support::example_bin("mock_mcp"), "env": {"API_TOKEN": "s3cr3t-value"}}}});
     std::fs::write(dir.join("omnix.json"), cfg.to_string()).unwrap();
     let (svc, _) = start(&dir).await;
     let _ = call(&svc, "execute", json!({"code": "return 1"})).await; // forces connect to finish

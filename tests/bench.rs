@@ -2,6 +2,8 @@
 //! Run: cargo test --test bench -- --ignored --nocapture
 //! Token estimates are chars/4 (rough). To use a real tokenizer, replace `est_tokens` below
 //! (e.g. call a tiktoken/Anthropic count_tokens binding on the same strings).
+mod support;
+
 use rmcp::{
     ServiceExt, model::CallToolRequestParams, service::RunningService, transport::TokioChildProcess,
 };
@@ -75,7 +77,7 @@ fn ratio(a: usize, b: usize) -> String {
 }
 
 async fn run(n_servers: usize, tools_each: usize, records: usize) -> Report {
-    let mock = env!("CARGO_BIN_EXE_mock_many");
+    let mock = support::example_bin("mock_many");
     let omnix = env!("CARGO_BIN_EXE_omnix");
     let dir = std::env::temp_dir().join(format!(
         "omnix-bench-{}-{}-{}",
@@ -110,7 +112,7 @@ async fn run(n_servers: usize, tools_each: usize, records: usize) -> Report {
     let mut defs_json = vec![];
     let mut s1: Option<Client> = None;
     for i in 1..=n_servers {
-        let mut c = tokio::process::Command::new(mock);
+        let mut c = tokio::process::Command::new(&mock);
         c.args(sargs(i));
         let cl = spawn(c).await;
         for t in cl.list_all_tools().await.unwrap() {

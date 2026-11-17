@@ -1,4 +1,6 @@
 //! E2E: add / remove / list / doctor / find / sdk.
+mod support;
+
 use std::{path::PathBuf, process::Command};
 
 fn tmp() -> PathBuf {
@@ -32,7 +34,12 @@ fn with_mock() -> PathBuf {
     let d = tmp();
     let (ok, _, e) = omnix(
         &d,
-        &["add", "mock", "--command", env!("CARGO_BIN_EXE_mock_mcp")],
+        &[
+            "add",
+            "mock",
+            "--command",
+            &support::example_bin("mock_mcp"),
+        ],
     );
     assert!(ok, "{e}");
     d

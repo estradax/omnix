@@ -25,7 +25,7 @@ agent configs: every test runs with a temporary `HOME` and `OMNIX_CONFIG_DIR`.
 | `src/auth.rs`, `src/oauth.rs`, `src/store.rs` | Credentials, OAuth flows, keychain / encrypted-file storage. |
 | `src/policy.rs`, `src/handles.rs` | Allow/deny, read-only mode, hooks, audit log, binary handles. |
 | `src/setup.rs` | `omnix setup`: agent config adapters, diff/confirm/backup/undo. |
-| `src/bin/mock_*.rs` | Mock MCP servers used by the tests and the benchmark. |
+| `examples/mock_*.rs` | Mock MCP servers used by the tests and the benchmark (examples, so `cargo install` does not ship them). |
 | `tests/` | End-to-end tests, including mock OAuth and legacy-SSE servers. |
 
 ## Guidelines

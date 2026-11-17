@@ -1,3 +1,5 @@
+mod support;
+
 use rmcp::{ServiceExt, model::CallToolRequestParams, transport::TokioChildProcess};
 use serde_json::json;
 
@@ -6,7 +8,7 @@ async fn gateway() -> (
     tempdir::Dir,
 ) {
     let dir = tempdir::Dir::new();
-    let cfg = json!({"servers": {"mock": {"command": env!("CARGO_BIN_EXE_mock_mcp")}}});
+    let cfg = json!({"servers": {"mock": {"command": support::example_bin("mock_mcp")}}});
     std::fs::write(dir.path().join("omnix.json"), cfg.to_string()).unwrap();
     let mut c = tokio::process::Command::new(env!("CARGO_BIN_EXE_omnix"));
     c.arg("serve")
