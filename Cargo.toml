@@ -1,0 +1,40 @@
+[package]
+name = "omnix"
+version = "0.1.0"
+edition = "2024"
+description = "An MCP gateway that exposes all your MCP servers as three tools (search, describe, execute) and runs model-written JavaScript against them in a sandbox."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/estradax/omnix"
+homepage = "https://github.com/estradax/omnix"
+readme = "README.md"
+keywords = ["mcp", "model-context-protocol", "agents", "gateway", "sandbox"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = ["/assets/social-preview.*", "/docs/", "/tests/", "/.github/"]
+
+[dependencies]
+anyhow = "1.0.104"
+argon2 = "0.6.0"
+async-trait = "0.1.92"
+base64 = "0.23.1"
+chacha20poly1305 = "0.11.0"
+clap = { version = "4.6.8", features = ["derive"] }
+dirs = "7.0.0"
+hex = "0.4.3"
+http = "1.5.0"
+json5 = "1.3.7"
+keyring = "4.2.0"
+oauth2 = { version = "5", default-features = false }
+rand = "0.10.4"
+regex = "1.13.1"
+reqwest = { version = "0.13", features = ["json", "form"] }
+rmcp = { version = "3.10.0", features = ["client", "server", "transport-io", "transport-child-process", "transport-streamable-http-client-reqwest", "auth", "auth-client-credentials-jwt"] }
+rquickjs = { version = "0.14.0", features = ["futures", "macro", "parallel"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+sha2 = "0.11.1"
+similar = "3.2.1"
+tokio = { version = "1.54.1", features = ["full"] }
+toml = "1.2.1"
+toml_edit = "0.25.19"
+url = "2.5.8"
+zeroize = "1.9.1"
